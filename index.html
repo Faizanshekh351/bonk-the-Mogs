@@ -84,7 +84,10 @@
 </head>
 <body>
 
-    <video id="menu-video" src="./video3.mp4" autoplay loop muted playsinline></video>
+    <video id="menu-video" autoplay loop muted playsinline>
+    <source src="video3.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
     <div id="damage-overlay"></div>
     
     <div id="toast-container"></div>
@@ -706,5 +709,6 @@ if (menuVideo) {
     
 </body>
 </html>
+
 
 
