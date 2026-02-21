@@ -674,6 +674,14 @@
                 grid.appendChild(s);
             });
         }
+        // Force the video to play if it's stuck
+const menuVideo = document.getElementById('menu-video');
+if (menuVideo) {
+    menuVideo.muted = true; // Double-down on muting
+    menuVideo.play().catch(error => {
+        console.log("Autoplay was prevented. High-five a user interaction first!", error);
+    });
+}
         
         function buyHammer(id, cost) {
             if(coins >= cost) { 
@@ -695,6 +703,8 @@
 
         window.onload = checkLogin;
     </script>
+    
 </body>
 </html>
+
 
