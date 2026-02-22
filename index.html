@@ -680,7 +680,24 @@
             document.getElementById("loading-screen").style.display = "flex";
             if (currentRoomPasscode) checkRoomStatus(); 
         }
-
+const ACHIEVEMENTS = [
+    { 
+        id: "first_blood", 
+        name: "First Blood", 
+        desc: "Land your very first hit!", 
+        reward: 50, 
+        icon: "🩸" 
+    },
+    { 
+        id: "oops", 
+        name: "Butterfingers", 
+        desc: "Miss 5 times in a single game.", 
+        reward: 10, 
+        icon: "🙈" 
+    }
+    // You can add more achievements here later!
+];
+        
         function openRooms() {
             document.getElementById("loading-screen").style.display = "none";
             document.getElementById("room-screen").style.display = "flex";
@@ -1361,3 +1378,4 @@
 </body>
 
 </html>
+
