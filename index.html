@@ -1,55 +1,323 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Whac a Mogg - Bonk Edition</title>
     <style>
-        body { font-family: 'Arial Black', Gadget, sans-serif; text-align: center; background: #121212; background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url("bg3.png"); background-size: cover; background-attachment: fixed; color: white; margin: 0; overflow: hidden; }
+        body {
+            font-family: 'Arial Black', Gadget, sans-serif;
+            text-align: center;
+            background: #121212;
+            background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("bg3.png");
+            background-size: cover;
+            background-attachment: fixed;
+            color: white;
+            margin: 0;
+            overflow: hidden;
 
-        /* UPDATED: GIF BACKGROUND CSS */
-        #menu-gif { position: fixed; inset: 0; width: 100vw; height: 100vh; object-fit: cover; z-index: 100; pointer-events: none; }
+            /* UI/UX POLISH */
+            height: 100dvh;
+            width: 100vw;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-        .hammer-animation { position: absolute; width: 140px; height: 140px; background-size: contain; background-repeat: no-repeat; background-position: center; z-index: 50; pointer-events: none; top: -25%; left: 50%; transform: translate(-50%, 0) rotate(0deg); animation: hammerBonk 0.5s ease-out forwards; }       
-        @keyframes hammerBonk { 0% { transform: translate(-50%, -20px) rotate(45deg); opacity: 0; } 50% { transform: translate(-50%, 0px) rotate(0deg); opacity: 1; } 100% { transform: translate(-50%, 20px) rotate(-20deg); opacity: 0; } }
+        /* --- UPGRADED BUTTON UI/UX --- */
+        .btn, .btn-pause, .tab-btn, .shop-btn, .tile, .character-mask {
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            outline: none;
+        }
 
-        .miss-text { position: absolute; color: gold; font-size: 1.5rem; font-weight: bold; text-shadow: 2px 2px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; pointer-events: none; z-index: 60; top: 20%; left: 50%; transform: translate(-50%, 0); animation: floatUp 0.5s ease-out forwards; }
-        @keyframes floatUp { 0% { transform: translate(-50%, 0); opacity: 1; } 100% { transform: translate(-50%, -30px); opacity: 0; } }
+        .btn {
+            background: linear-gradient(to bottom, #a8ff3e, #8de21d);
+            color: #000;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border: 2px solid #5c990f;
+            border-radius: 16px;
+            cursor: pointer;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 5px;
+            box-shadow: 0 6px 0 #5c990f, 0 10px 15px rgba(0, 0, 0, 0.4);
+            transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.5);
+        }
 
-        #damage-overlay { position: fixed; inset: 0; background-color: red; opacity: 0; pointer-events: none; z-index: 999; }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 0 #5c990f, 0 12px 20px rgba(0, 0, 0, 0.5);
+            filter: brightness(1.05);
+        }
+
+        .btn:active {
+            transform: translateY(6px) !important;
+            box-shadow: 0 0 0 #5c990f, 0 2px 5px rgba(0, 0, 0, 0.5) !important;
+        }
+
+        /* Color Variations for Buttons */
+        .btn-blue {
+            background: linear-gradient(to bottom, #5dade2, #3498db);
+            border-color: #2980b9;
+            color: white;
+            text-shadow: 1px 1px 0px #1a5276;
+            box-shadow: 0 6px 0 #2980b9, 0 10px 15px rgba(0,0,0,0.4);
+        }
+        .btn-blue:hover { box-shadow: 0 8px 0 #2980b9, 0 12px 20px rgba(0,0,0,0.5); }
+        .btn-blue:active { box-shadow: 0 0 0 #2980b9, 0 2px 5px rgba(0,0,0,0.4); }
+
+        .btn-purple {
+            background: linear-gradient(to bottom, #af7ac5, #9b59b6);
+            border-color: #8e44ad;
+            color: white;
+            text-shadow: 1px 1px 0px #5b2c6f;
+            box-shadow: 0 6px 0 #8e44ad, 0 10px 15px rgba(0,0,0,0.4);
+        }
+        .btn-purple:hover { box-shadow: 0 8px 0 #8e44ad, 0 12px 20px rgba(0,0,0,0.5); }
+        .btn-purple:active { box-shadow: 0 0 0 #8e44ad, 0 2px 5px rgba(0,0,0,0.4); }
+
+        .btn-orange {
+            background: linear-gradient(to bottom, #f39c12, #e67e22);
+            border-color: #d35400;
+            color: white;
+            text-shadow: 1px 1px 0px #873600;
+            box-shadow: 0 6px 0 #d35400, 0 10px 15px rgba(0,0,0,0.4);
+        }
+        .btn-orange:hover { box-shadow: 0 8px 0 #d35400, 0 12px 20px rgba(0,0,0,0.5); }
+        .btn-orange:active { box-shadow: 0 0 0 #d35400, 0 2px 5px rgba(0,0,0,0.4); }
+
+        .btn-red {
+            background: linear-gradient(to bottom, #e74c3c, #c0392b);
+            border-color: #922b21;
+            color: white;
+            text-shadow: 1px 1px 0px #641e16;
+            box-shadow: 0 6px 0 #922b21, 0 10px 15px rgba(0,0,0,0.4);
+        }
+        .btn-red:hover { box-shadow: 0 8px 0 #922b21, 0 12px 20px rgba(0,0,0,0.5); }
+        .btn-red:active { box-shadow: 0 0 0 #922b21, 0 2px 5px rgba(0,0,0,0.4); }
+
+        .btn-menu {
+            background: linear-gradient(to bottom, #777, #555);
+            border-color: #333;
+            color: white;
+            text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.8);
+            box-shadow: 0 6px 0 #333, 0 10px 15px rgba(0, 0, 0, 0.4);
+        }
+        .btn-menu:hover { box-shadow: 0 8px 0 #333, 0 12px 20px rgba(0, 0, 0, 0.5); }
+        .btn-menu:active { box-shadow: 0 0 0 #333, 0 2px 5px rgba(0, 0, 0, 0.4); }
+
+        /* Pause button styling */
+        .btn-pause {
+            background: linear-gradient(to bottom, #ffdb4d, #ffcc00);
+            color: #000;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            font-size: 1.8rem;
+            border: 4px solid #fff;
+            box-shadow: 0 6px 0 #b38f00, 0 10px 15px rgba(0, 0, 0, 0.5);
+            cursor: pointer;
+            transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        .btn-pause:hover { transform: translateY(-2px); box-shadow: 0 8px 0 #b38f00, 0 12px 20px rgba(0, 0, 0, 0.5); filter: brightness(1.1); }
+        .btn-pause:active { transform: translateY(6px); box-shadow: 0 0 0 #b38f00, 0 4px 5px rgba(0, 0, 0, 0.5); }
+
+        #menu-gif {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        .hammer-animation {
+            position: absolute;
+            width: 140px;
+            height: 140px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            z-index: 50;
+            pointer-events: none;
+            top: -25%;
+            left: 50%;
+            transform: translate(-50%, 0) rotate(0deg);
+            animation: hammerBonk 0.5s ease-out forwards;
+        }
+
+        @keyframes hammerBonk {
+            0% { transform: translate(-50%, -20px) rotate(45deg); opacity: 0; }
+            50% { transform: translate(-50%, 0px) rotate(0deg); opacity: 1; }
+            100% { transform: translate(-50%, 20px) rotate(-20deg); opacity: 0; }
+        }
+
+        .miss-text {
+            position: absolute;
+            color: gold;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+            pointer-events: none;
+            z-index: 60;
+            top: 20%;
+            left: 50%;
+            transform: translate(-50%, 0);
+            animation: floatUp 0.5s ease-out forwards;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translate(-50%, 0); opacity: 1; }
+            100% { transform: translate(-50%, -30px); opacity: 0; }
+        }
+
+        #damage-overlay {
+            position: fixed;
+            inset: 0;
+            background-color: red;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 999;
+        }
+
         .flash-red { animation: damageFlash 0.4s ease-out forwards; }
-        @keyframes damageFlash { 0% { opacity: 0; } 20% { opacity: 0.6; } 100% { opacity: 0; } }
 
-        #login-screen, #loading-screen, #game-over-screen, #shop-screen, #leaderboard-screen, #pause-screen, #achievements-screen { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.75); z-index: 1000; display: flex; flex-direction: column; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
-        #login-screen, #loading-screen, #game-over-screen, #shop-screen, #leaderboard-screen, #pause-screen, #achievements-screen { display: none; }
+        @keyframes damageFlash {
+            0% { opacity: 0; }
+            20% { opacity: 0.6; }
+            100% { opacity: 0; }
+        }
 
-        .btn { background: #8de21d; color: #000; padding: 15px 40px; font-size: 1.5rem; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; margin: 5px; box-shadow: 0 5px 0 #5c990f; transition: all 0.1s; }
-        .btn:active { transform: translateY(5px); box-shadow: 0 0 0 #5c990f; }
-        .btn-shop { background: #ffcc00; box-shadow: 0 5px 0 #b38f00; }
-        .btn-menu { background: #555; color: white; box-shadow: 0 5px 0 #333; }
-        
-        .game-header { display: flex; justify-content: space-between; align-items: center; width: 90vw; max-width: 450px; margin: 15px auto; gap: 15px; }
-        .btn-pause { background: #ffcc00; color: #000; width: 60px; height: 60px; border-radius: 50%; font-size: 1.8rem; border: 4px solid #fff; box-shadow: 0 6px 0 #b38f00, 0 10px 15px rgba(0,0,0,0.5); cursor: pointer; transition: all 0.1s; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
-        .btn-pause:active { transform: translateY(6px); box-shadow: 0 0 0 #b38f00, 0 4px 5px rgba(0,0,0,0.5); }
-        .stats { padding: 12px 20px; font-size: 1.2rem; text-shadow: 2px 2px 0 #000; color: gold; background: rgba(45, 34, 28, 0.85); border: 4px solid #ffcc00; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.5), inset 0 0 15px rgba(0,0,0,0.8); line-height: 1.4; text-align: left; flex-grow: 1; margin: 0; }
+        #login-screen, #loading-screen, #game-over-screen, #shop-screen,
+        #leaderboard-screen, #pause-screen, #achievements-screen, #room-screen {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.75);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+            display: none;
+        }
 
-        .login-input { padding: 15px; font-size: 1.2rem; border-radius: 8px; border: 3px solid #555; background: #1a1a1a; color: white; text-align: center; margin-bottom: 10px; font-family: 'Arial Black', sans-serif; width: 250px; }
-        .auth-tabs { display: flex; gap: 10px; margin-bottom: 15px; }
-        .tab-btn { background: #333; color: #aaa; padding: 10px 20px; font-size: 1rem; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
-        .tab-btn.active { background: #8de21d; color: #000; box-shadow: 0 4px 0 #5c990f; }
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 90vw;
+            max-width: 450px;
+            margin: 15px auto;
+            gap: 15px;
+        }
 
-        .toolbox, .leaderboard-box { background: rgba(74, 59, 50, 0.9); border: 8px solid #2d221c; border-radius: 15px; padding: 25px; display: flex; flex-direction: column; gap: 10px; width: 340px; max-height: 60vh; overflow-y: auto; margin: 20px 0; box-shadow: inset 0 0 30px rgba(0,0,0,0.8), 0 10px 20px rgba(0,0,0,0.5); }
-        .toolbox { flex-direction: row; flex-wrap: wrap; justify-content: center; max-width: 600px; width: auto; }
+        .stats {
+            padding: 12px 20px;
+            font-size: 1.2rem;
+            text-shadow: 2px 2px 0 #000;
+            color: gold;
+            background: rgba(45, 34, 28, 0.85);
+            border: 4px solid #ffcc00;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(0, 0, 0, 0.8);
+            line-height: 1.4;
+            text-align: left;
+            flex-grow: 1;
+            margin: 0;
+        }
 
-        .tool-slot { background: #1a1a1a; border: 3px dashed #555; border-radius: 12px; padding: 15px; width: 120px; display: flex; flex-direction: column; align-items: center; }
-        .tool-slot.equipped-slot { border: 3px solid #ffcc00; background: #2a2510; }
+        .login-input {
+            padding: 15px;
+            font-size: 1.2rem;
+            border-radius: 8px;
+            border: 3px solid #555;
+            background: #1a1a1a;
+            color: white;
+            text-align: center;
+            margin-bottom: 10px;
+            font-family: 'Arial Black', sans-serif;
+            width: 250px;
+        }
+
+        .toolbox, .leaderboard-box {
+            background: rgba(74, 59, 50, 0.9);
+            border: 8px solid #2d221c;
+            border-radius: 15px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 340px;
+            max-height: 60vh;
+            overflow-y: auto;
+            margin: 20px 0;
+            box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.8), 0 10px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .toolbox {
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 600px;
+            width: auto;
+        }
+
+        .tool-slot {
+            background: #1a1a1a;
+            border: 3px dashed #555;
+            border-radius: 12px;
+            padding: 15px;
+            width: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .tool-slot.equipped-slot {
+            border: 3px solid #ffcc00;
+            background: #2a2510;
+        }
+
         .tool-slot img { width: 70px; height: 70px; object-fit: contain; margin-bottom: 10px; }
         .tool-slot h3 { font-size: 0.9rem; margin: 0 0 10px; color: #ddd; }
 
-        .score-entry { display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px dashed #555; color: white; font-size: 1.1rem; border-radius: 8px; align-items: center; }
+        .score-entry {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px;
+            border-bottom: 1px dashed #555;
+            color: white;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            align-items: center;
+        }
+
         .score-entry.is-me { background: rgba(141, 226, 29, 0.15); border: 2px solid #8de21d; }
 
-        .achievement-badge { display: flex; align-items: center; padding: 12px; background: #222; border: 2px dashed #555; border-radius: 8px; text-align: left; margin-bottom: 5px; }
+        .achievement-badge {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: #222;
+            border: 2px dashed #555;
+            border-radius: 8px;
+            text-align: left;
+            margin-bottom: 5px;
+        }
+
         .achievement-badge.unlocked { background: rgba(255, 204, 0, 0.15); border: 2px solid #ffcc00; }
         .achievement-icon { font-size: 2rem; margin-right: 15px; opacity: 0.3; }
         .achievement-badge.unlocked .achievement-icon { opacity: 1; text-shadow: 0 0 10px gold; }
@@ -59,15 +327,123 @@
         .achievement-info p { margin: 0; color: #888; font-size: 0.8rem; font-family: sans-serif; line-height: 1.2; }
         .achievement-reward { margin-left: 10px; color: #8de21d; font-weight: bold; white-space: nowrap; }
 
-        #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 2000; display: flex; flex-direction: column; gap: 10px; pointer-events: none; width: 90vw; max-width: 400px; }
-        .toast { background: #ffcc00; color: #000; padding: 15px; border-radius: 12px; font-weight: bold; font-size: 1.1rem; border: 4px solid #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.5); animation: slideDown 0.5s ease-out, fadeOut 0.5s ease-in 3.5s forwards; display: flex; align-items: center; gap: 10px; text-align: left; }
+        #toast-container {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+            width: 90vw;
+            max-width: 400px;
+        }
+
+        /* Original Achievement Toast */
+        .toast {
+            background: linear-gradient(135deg, #ffdb4d, #ffcc00);
+            color: #000;
+            padding: 15px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border: 3px solid #fff;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.6);
+            animation: slideDown 0.5s ease-out, fadeOut 0.5s ease-in 3.5s forwards;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-align: left;
+        }
+
+        /* --- NEW ROOM TOAST STYLE --- */
+        .room-toast {
+            background: linear-gradient(135deg, #3498db, #8e44ad);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            border: 3px solid #74b9ff;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.6);
+            animation: slideDown 0.5s ease-out, fadeOut 0.5s ease-in 3.5s forwards;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-align: left;
+            text-shadow: 1px 1px 0 #000;
+        }
+        .room-toast-icon { font-size: 2.5rem; }
+        .room-toast-content { display: flex; flex-direction: column; }
+        .room-toast-title { color: #f1c40f; font-size: 1.2rem; text-transform: uppercase; margin-bottom: 2px;}
+        .room-toast-message { font-size: 1.3rem; letter-spacing: 2px; color: #fff;}
+
+        @keyframes slideDown { 0% { transform: translateY(-100%); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
         @keyframes fadeOut { to { opacity: 0; transform: translateY(-30px); } }
 
-        #board { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 10px; width: 90vw; max-width: 450px; aspect-ratio: 1/1; margin: 0 auto; background: url("soil.png") center/cover; border: 8px solid #3d2b1f; border-radius: 15px; padding: 10px; }
-        .tile { background: url("pipe.png") no-repeat center bottom; background-size: 85%; position: relative; cursor: pointer; }
+        #board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 10px;
+            width: 90vw;
+            max-width: 450px;
+            aspect-ratio: 1/1;
+            margin: 0 auto;
+            background: url("soil.png") center/cover;
+            border: 8px solid #3d2b1f;
+            border-radius: 15px;
+            padding: 10px;
+        }
 
-        .character-mask { position: absolute; width: 90%; height: 95%; bottom: 40%; left: 5%; overflow: hidden; display: flex; align-items: flex-end; justify-content: center; }
-        .character-mask img { width: auto; height: auto; max-width: 100%; max-height: 100%; transform: translateY(100%); animation: slideUp 0.2s ease-out forwards; }
+        .frenzy-active {
+            animation: frenzyPulse 0.5s infinite alternate !important;
+            border-color: #ffcc00 !important;
+            box-shadow: 0 0 30px #ffcc00, inset 0 0 20px #ffcc00 !important;
+        }
+
+        @keyframes frenzyPulse {
+            0% { transform: scale(1); box-shadow: 0 0 20px #ffcc00; }
+            100% { transform: scale(1.02); box-shadow: 0 0 40px #ffcc00, inset 0 0 30px #ffcc00; }
+        }
+
+        .frenzy-text {
+            color: #ffcc00 !important;
+            text-shadow: 0 0 10px #ffcc00, 2px 2px 0 #000 !important;
+            transform: scale(1.2);
+            transition: all 0.2s;
+        }
+
+        .tile {
+            background: url("pipe.png") no-repeat center bottom;
+            background-size: 85%;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .character-mask {
+            position: absolute;
+            width: 90%;
+            height: 95%;
+            bottom: 40%;
+            left: 5%;
+            overflow: hidden;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+        }
+
+        .character-mask img {
+            width: auto;
+            height: auto;
+            max-width: 100%;
+            max-height: 100%;
+            transform: translateY(100%);
+            animation: slideUp 0.2s ease-out forwards;
+        }
+
         .character-mask img[src*="mole1.gif"] { margin-bottom: -35px; }
         .character-mask img.hide { animation: slideDown 0.15s ease-in forwards !important; }
 
@@ -78,47 +454,68 @@
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
     </style>
 </head>
+
 <body>
 
     <img id="menu-gif" src="video.gif">
-    
+
     <div id="damage-overlay"></div>
     <div id="toast-container"></div>
 
+    <div id="room-screen">
+        <h1 style="color: #3498db; margin-bottom: 10px; text-shadow: 3px 3px 0 #000;">🚪 CUSTOM ROOM</h1>
+        
+        <div class="toolbox" style="align-items: center; width: 300px;">
+            <h3 style="color: white; margin: 0 0 15px 0;">HOST A GAME</h3>
+            <button class="btn btn-purple" style="width: 100%;" onclick="createRoom()">➕ CREATE ROOM</button>
+            <div id="room-code-display" style="color: #ffcc00; font-size: 2.5rem; font-weight: bold; margin-top: 15px; letter-spacing: 8px; display: none; text-shadow: 2px 2px #000;"></div>
+            
+            <hr style="width: 100%; border-color: #555; margin: 25px 0;">
+            
+            <h3 style="color: white; margin: 0 0 15px 0;">JOIN A GAME</h3>
+            <input type="number" id="join-room-input" class="login-input" placeholder="5-DIGIT CODE" max="99999" style="width: 80%; letter-spacing: 3px;">
+            <p id="room-error" style="color: #ff4757; font-weight: bold; display: none; margin: 5px 0;">Invalid Room Code</p>
+            <button class="btn btn-blue" style="width: 100%;" onclick="joinRoom()">🔗 JOIN</button>
+        </div>
+        
+        <button class="btn btn-menu" onclick="closeRooms()">🔙 BACK</button>
+    </div>
+
     <div id="login-screen">
-        <h1 style="color: #8de21d; font-size: 3.5rem; margin-bottom: 10px; text-shadow: 3px 3px 0 #000;">MOGG HUB</h1>
-        <div class="auth-tabs">
-            <button id="tab-login" class="tab-btn active" onclick="switchAuthMode('login')">LOGIN</button>
-            <button id="tab-register" class="tab-btn" onclick="switchAuthMode('register')">REGISTER</button>
-        </div>
+        <h1 style="color: #8de21d; font-size: 3.5rem; margin-bottom: 20px; text-shadow: 3px 3px 0 #000;">MOGG HUB</h1>
+        
         <div style="display: flex; flex-direction: column; align-items: center; background: rgba(0,0,0,0.5); padding: 25px; border-radius: 15px; border: 2px solid #333;">
-            <input type="email" id="auth-email" class="login-input" placeholder="EMAIL" style="display: none;">
-            <input type="text" id="auth-username" class="login-input" placeholder="USERNAME" maxlength="15">
-            <input type="password" id="auth-password" class="login-input" placeholder="PASSWORD">
+            <input type="text" id="guest-username" class="login-input" placeholder="ENTER USERNAME" maxlength="15">
             <p id="login-error" style="color: #ff4757; font-weight: bold; margin: 5px 0 15px 0; display: none; text-shadow: 1px 1px #000;">Error Message</p>
-            <button class="btn" id="auth-btn" style="width: 100%;" onclick="submitAuth()">LOGIN</button>
+            <button class="btn" id="guest-btn" style="width: 100%; padding: 15px 0;" onclick="guestLogin()">ENTER GAME</button>
         </div>
+        
         <div style="margin-top: 25px; border-top: 2px dashed #555; padding-top: 20px; width: 300px;">
-            <button class="btn btn-menu" style="font-size: 1.1rem; width: 100%;" onclick="playAnonymous()">🎭 PLAY ANONYMOUSLY</button>
+            <button class="btn btn-menu" style="width: 100%;" onclick="playAnonymous()">🎭 PLAY ANONYMOUSLY</button>
         </div>
     </div>
 
     <div id="loading-screen">
-        <h1 style="color: #8de21d; font-size: 3rem; margin-bottom: 0; text-shadow: 3px 3px 0 #000;">BONK THE MOGG</h1>
-        <div id="player-greeting" style="color: #aaa; font-size: 1.2rem; margin-top: 5px;"></div>
+        <h1 style="color: #8de21d; font-size: 3.5rem; margin-bottom: 0; text-shadow: 3px 3px 0 #000;">BONK THE MOGG</h1>
+        <div id="player-greeting" style="color: #aaa; font-size: 1.2rem; margin-top: 5px; font-weight: bold;"></div>
+        
+        <button id="leave-room-btn" class="btn btn-red" style="display:none; font-size: 0.8rem; padding: 8px 15px; margin-top: 10px;" onclick="leaveRoom()">❌ LEAVE ROOM</button>
+        
         <div id="hs" style="color: gold; text-shadow: 2px 2px 0 #000;font-size: 22px; margin-top: 15px;">Best: 0</div>
-        <div id="coin-display" style="color: gold; margin: 15px 0; font-size: 2rem; font-weight: bold; text-shadow: 2px 2px 4px #000;">0 🍌</div>
-        
-        <div style="margin-bottom: 10px;">
-            <button class="btn" style="padding: 15px 60px;" onclick="startGame()">▶️ START</button>
-        </div>
-        <div style="display: flex; gap: 5px; flex-wrap: wrap; justify-content: center; max-width: 400px;">
-            <button class="btn btn-menu" style="font-size: 1.1rem; background: #3498db; box-shadow: 0 5px 0 #2980b9;" onclick="showLeaderboard()">🌍 LEADERBOARD</button>
-            <button class="btn btn-shop" style="font-size: 0.9rem;color: white; background: #9b59b6; box-shadow: 0 5px 0 #8e44ad;" onclick="openShop()">🛒 ITEM SHOP</button>
-            <button class="btn btn-menu" style="font-size: 0.9rem; background: #9b59b6; box-shadow: 0 5px 0 #8e44ad;" onclick="openAchievements()">🏆 TROPHIES</button>
+        <div id="coin-display" style="color: gold; margin: 15px 0; font-size: 2.5rem; font-weight: bold; text-shadow: 2px 2px 4px #000;">0 🍌</div>
+
+        <div style="margin-bottom: 15px;">
+            <button class="btn" style="padding: 15px 80px; font-size: 1.8rem;" onclick="startGame()">▶️ START</button>
         </div>
         
-        <button class="btn btn-menu" style="font-size: 1rem; padding: 10px 20px; margin-top: 25px;background: #044e42; box-shadow: 0 5px 0 #56445e;color: #000;" onclick="logout()">⏻ LOGOUT</button>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; max-width: 450px;">
+            <button class="btn btn-blue" style="font-size: 1rem; padding: 12px 20px;" onclick="showLeaderboard()">🌍 LEADERBOARD</button>
+            <button class="btn btn-orange" style="font-size: 1rem; padding: 12px 20px;" onclick="openRooms()">🚪 ROOMS</button>
+            <button class="btn btn-purple" style="font-size: 1rem; padding: 12px 20px;" onclick="openShop()">🛒 ITEM SHOP</button>
+            <button class="btn btn-purple" style="font-size: 1rem; padding: 12px 20px;" onclick="openAchievements()">🏆 TROPHIES</button>
+        </div>
+
+        <button class="btn btn-red" style="font-size: 1rem; padding: 10px 20px; margin-top: 30px;" onclick="logout()">⏻ LOGOUT</button>
     </div>
 
     <div id="achievements-screen">
@@ -135,26 +532,26 @@
     </div>
 
     <div id="pause-screen">
-        <h1 style="color: #3498db; font-size: 3rem; text-shadow: 3px 3px 0 #000;">PAUSED</h1>
-        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
-            <button class="btn" onclick="resumeGame()">▶️ RESUME</button>
-            <button class="btn btn-menu" onclick="quitGame()">⏹️ QUIT TO MENU</button>
+        <h1 style="color: #3498db; font-size: 4rem; text-shadow: 4px 4px 0 #000;">PAUSED</h1>
+        <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 20px; width: 250px;">
+            <button class="btn btn-blue" onclick="resumeGame()">▶️ RESUME</button>
+            <button class="btn btn-red" onclick="quitGame()">⏹️ QUIT TO MENU</button>
         </div>
     </div>
 
     <div id="game-over-screen">
-        <h1 style="color: #ff4757; font-size: 3rem; text-shadow: 3px 3px 0 #000; margin-bottom: 0;">GAME OVER</h1>
-        <h2 id="final-score" style="color: gold; font-size: 4.5rem; text-shadow: 4px 4px 0 #000; margin: 10px 0;">0 🍌</h2>
-        <div id="save-status" style="color: gold; margin-bottom: 20px; font-weight: bold; font-size: 1.2rem; text-shadow: 2px 2px #000;">Saving score...</div>
-        <div>
+        <h1 style="color: #ff4757; font-size: 4rem; text-shadow: 4px 4px 0 #000; margin-bottom: 0;">GAME OVER</h1>
+        <h2 id="final-score" style="color: gold; font-size: 5rem; text-shadow: 5px 5px 0 #000; margin: 10px 0;">0 🍌</h2>
+        <div id="save-status" style="color: gold; margin-bottom: 30px; font-weight: bold; font-size: 1.5rem; text-shadow: 2px 2px #000;">Saving score...</div>
+        <div style="display: flex; flex-direction: column; gap: 10px; width: 280px;">
             <button class="btn" onclick="startGame()">↻ REPLAY</button>
-            <button class="btn btn-menu" onclick="showLeaderboard()">🌍 LEADERBOARD</button>
+            <button class="btn btn-blue" onclick="showLeaderboard()">🌍 LEADERBOARD</button>
             <button class="btn btn-menu" onclick="backToMenu()">🏠 MENU</button>
         </div>
     </div>
 
     <div id="leaderboard-screen">
-        <h1 style="color: gold; text-shadow: 2px 2px 0 #000;">🌍 LEADERBOARD</h1>
+        <h1 id="leaderboard-title" style="color: gold; text-shadow: 2px 2px 0 #000;">🌍 LEADERBOARD</h1>
         <div class="leaderboard-box" id="leaderboard-list">Loading scores...</div>
         <button class="btn btn-menu" onclick="closeLeaderboard()">🔙 BACK</button>
     </div>
@@ -180,24 +577,36 @@
 
         let score = 0, level = 1, spawnRate = 600, stayTime = 1000, isOver = false;
         let combo = 0, multiplier = 1, isPaused = false;
-        let missesThisGame = 0; 
+        let missesThisGame = 0;
         let gameTimer, recentMoggs = new Array(9).fill(false);
-        
+
         let coins = 0;
         let unlockedHammers = ["default"];
         let currentHammerId = "default";
-        let unlockedAchievements = []; 
-        
-        let currentUser = localStorage.getItem("moggUsername");
-        let currentAuthMode = 'login'; 
+        let unlockedAchievements = [];
 
-        const ASSETS = { MOGG: "mogg3.gif", CACTUS: "mole1.gif", BONUS: "bonus3.gif" };
+        let currentUser = localStorage.getItem("moggUsername");
+        let currentRoomPasscode = null;
+
+        const ASSETS = { 
+            MOGG: "mogg3.gif", 
+            CACTUS: "mole1.gif", 
+            BONUS: "bonus3.gif",
+            SUPER_MASK: "mask.png" 
+        };
+        
+        let isFrenzy = false;
+        let frenzyTimeout;
+        let originalSpawnRate = 600;
+        let originalStayTime = 1000;
+        let leaderboardOrigin = "loading-screen";
+
         const SHOP_ITEMS = [
             { id: "default", name: "Standard", cost: 0, img: "hammer.png" },
             { id: "ban", name: "MOON Hammer", cost: 100, img: "hammer1.png" },
             { id: "gold", name: "Gold Hammer", cost: 500, img: "hammer2.png" },
             { id: "duck", name: "MONSTER CLAW", cost: 800, img: "hammer3.png" },
-            { id: "monster", name: "Rober Baratheon", cost: 1200, img: "hammer4.png"},
+            { id: "monster", name: "Rober Baratheon", cost: 1200, img: "hammer4.png" },
             { id: "diamond", name: "Diamond Pick", cost: 2000, img: "hammer5.png" }
         ];
 
@@ -214,22 +623,47 @@
             { id: "unlucky", icon: "🦇", name: "Blind as a Bat", desc: "Miss 50 times in a single game.", reward: 500 }
         ];
 
+        function preloadAssets() {
+            const allImages = [ASSETS.MOGG, ASSETS.CACTUS, ASSETS.BONUS, ASSETS.SUPER_MASK, ...SHOP_ITEMS.map(i => i.img)];
+            allImages.forEach(src => {
+                const img = new Image();
+                img.src = src;
+            });
+        }
+
+        // --- EXISTING GOLDEN TOAST FOR ACHIEVEMENTS ---
         function showToast(title, reward) {
             const container = document.getElementById("toast-container");
             const toast = document.createElement("div");
             toast.className = "toast";
-            toast.innerHTML = `<span style="font-size: 2rem;">🏆</span> <div>Achievement Unlocked:<br><b style="color:white; font-size: 1.3rem;">${title}</b></div> <div style="margin-left:auto; color: #8de21d; font-size:1.3rem;">+${reward} 🍌</div>`;
+            toast.innerHTML = `<span style="font-size: 2rem;">🏆</span> <div>Achievement Unlocked:<br><b style="color:white; font-size: 1.3rem;">${title}</b></div> <div style="margin-left:auto; color: #000; font-size:1.3rem;">+${reward} 🍌</div>`;
             container.appendChild(toast);
             setTimeout(() => toast.remove(), 4000);
         }
 
+        // --- NEW: DEDICATED ROOM TOAST ---
+        function showRoomToast(title, message) {
+            const container = document.getElementById("toast-container");
+            const toast = document.createElement("div");
+            toast.className = "room-toast";
+            toast.innerHTML = `
+                <div class="room-toast-icon">🚪</div>
+                <div class="room-toast-content">
+                    <span class="room-toast-title">${title}</span>
+                    <span class="room-toast-message">${message}</span>
+                </div>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 4500);
+        }
+
         function triggerAchievement(id) {
-            if (unlockedAchievements.includes(id)) return; 
+            if (unlockedAchievements.includes(id)) return;
             const ach = ACHIEVEMENTS.find(a => a.id === id);
             unlockedAchievements.push(id);
             coins += ach.reward;
             showToast(ach.name, ach.reward);
-            saveUserData(); 
+            saveUserData();
             updateUI();
         }
 
@@ -254,6 +688,88 @@
         function closeAchievements() {
             document.getElementById("achievements-screen").style.display = "none";
             document.getElementById("loading-screen").style.display = "flex";
+        }
+
+        function openRooms() {
+            document.getElementById("loading-screen").style.display = "none";
+            document.getElementById("room-screen").style.display = "flex";
+        }
+
+        function closeRooms() {
+            document.getElementById("room-screen").style.display = "none";
+            document.getElementById("loading-screen").style.display = "flex";
+        }
+
+        async function createRoom() {
+            try {
+                const res = await fetch(`${API_URL}/rooms`, { method: 'POST' });
+                const data = await res.json();
+                currentRoomPasscode = data.passcode;
+                
+                document.getElementById("room-code-display").style.display = "block";
+                document.getElementById("room-code-display").innerText = data.passcode;
+                
+                // USE NEW TOAST
+                showRoomToast("Room Activated", `CODE: ${data.passcode}`);
+                
+                updateGreeting();
+            } catch (e) {
+                document.getElementById("room-error").innerText = "Server Error.";
+                document.getElementById("room-error").style.display = "block";
+            }
+        }
+
+        async function joinRoom() {
+            const inputCode = document.getElementById("join-room-input").value;
+            const errorText = document.getElementById("room-error");
+            
+            if (inputCode.length !== 5) {
+                errorText.innerText = "Code must be 5 digits.";
+                errorText.style.display = "block";
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_URL}/rooms/${inputCode}`);
+                if (res.ok) {
+                    currentRoomPasscode = inputCode;
+                    errorText.style.display = "none";
+                    
+                    // USE NEW TOAST
+                    showRoomToast("Room Joined", `CODE: ${inputCode}`);
+                    
+                    updateGreeting();
+                    closeRooms();
+                } else {
+                    errorText.innerText = "Room expired or doesn't exist.";
+                    errorText.style.display = "block";
+                }
+            } catch (e) {
+                errorText.innerText = "Connection error.";
+                errorText.style.display = "block";
+            }
+        }
+
+        function leaveRoom() {
+            currentRoomPasscode = null;
+            updateGreeting();
+            document.getElementById("join-room-input").value = "";
+            document.getElementById("room-code-display").style.display = "none";
+        }
+
+        function updateGreeting() {
+            const greetingElement = document.getElementById("player-greeting");
+            const leaveBtn = document.getElementById("leave-room-btn");
+            
+            if (currentRoomPasscode) {
+                greetingElement.innerText = `PLAYING AS: ${currentUser.toUpperCase()} | ROOM: ${currentRoomPasscode}`;
+                greetingElement.style.color = "#3498db";
+                leaveBtn.style.display = "inline-block";
+            } else {
+                greetingElement.innerText = `PLAYING AS: ${currentUser.toUpperCase()}`;
+                greetingElement.style.color = "#aaa";
+                leaveBtn.style.display = "none";
+            }
         }
 
         async function fetchUserData() {
@@ -284,64 +800,64 @@
             } catch (err) { console.error("Could not save inventory."); }
         }
 
-        function switchAuthMode(mode) {
-            currentAuthMode = mode;
-            document.getElementById('login-error').style.display = 'none';
-            if (mode === 'register') {
-                document.getElementById('tab-register').classList.add('active');
-                document.getElementById('tab-login').classList.remove('active');
-                document.getElementById('auth-email').style.display = 'block';
-                document.getElementById('auth-btn').innerText = 'CREATE ACCOUNT';
-            } else {
-                document.getElementById('tab-login').classList.add('active');
-                document.getElementById('tab-register').classList.remove('active');
-                document.getElementById('auth-email').style.display = 'none';
-                document.getElementById('auth-btn').innerText = 'LOGIN';
-            }
-        }
-
         function checkLogin() {
             if (currentUser) {
                 document.getElementById("login-screen").style.display = "none";
                 document.getElementById("loading-screen").style.display = "flex";
-                document.getElementById("player-greeting").innerText = "PLAYING AS: " + currentUser.toUpperCase();
-                fetchUserData(); 
+                updateGreeting();
+                fetchUserData();
             } else {
                 document.getElementById("loading-screen").style.display = "none";
                 document.getElementById("login-screen").style.display = "flex";
             }
         }
 
-        async function submitAuth() {
-            const email = document.getElementById("auth-email").value.trim();
-            const username = document.getElementById("auth-username").value.trim();
-            const password = document.getElementById("auth-password").value.trim();
+        async function guestLogin() {
+            const username = document.getElementById("guest-username").value.trim();
             const errorText = document.getElementById("login-error");
-            const btn = document.getElementById("auth-btn");
-            if (!username || !password || (currentAuthMode === 'register' && !email)) {
-                errorText.innerText = "Please fill in all fields!";
-                errorText.style.display = "block"; return;
+            const btn = document.getElementById("guest-btn");
+            
+            if (!username) {
+                errorText.innerText = "Please enter a username!";
+                errorText.style.display = "block"; 
+                return;
             }
+            
             errorText.style.display = "none";
             btn.innerText = "CONNECTING...";
-            const endpoint = currentAuthMode === 'register' ? '/register' : '/login';
-            const bodyData = currentAuthMode === 'register' ? { email, username, password } : { username, password };
+            
             try {
-                const res = await fetch(`${API_URL}${endpoint}`, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(bodyData)
+                const res = await fetch(`${API_URL}/guest-login`, {
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json' }, 
+                    body: JSON.stringify({ username })
                 });
+                
                 if (res.ok) {
-                    localStorage.setItem("moggUsername", username);
-                    currentUser = username; checkLogin();
+                    const data = await res.json();
+                    localStorage.setItem("moggUsername", data.username);
+                    currentUser = data.username; 
+                    
+                    if (data.isReturning) {
+                        // Use original gold toast for Welcome Back
+                        const container = document.getElementById("toast-container");
+                        const toast = document.createElement("div");
+                        toast.className = "toast";
+                        toast.innerHTML = `<span style="font-size: 2rem;">👋</span> <div><b style="color:white; font-size: 1.3rem;">WELCOME BACK!</b></div> <div style="margin-left:auto; color: #000; font-size:1.3rem;">${data.username}</div>`;
+                        container.appendChild(toast);
+                        setTimeout(() => toast.remove(), 3000);
+                    }
+                    
+                    checkLogin();
                 } else {
                     errorText.innerText = await res.text();
                     errorText.style.display = "block";
-                    btn.innerText = currentAuthMode === 'register' ? 'CREATE ACCOUNT' : 'LOGIN';
                 }
             } catch (err) {
                 errorText.innerText = "Server Error.";
                 errorText.style.display = "block";
-                btn.innerText = currentAuthMode === 'register' ? 'CREATE ACCOUNT' : 'LOGIN';
+            } finally {
+                btn.innerText = "ENTER GAME";
             }
         }
 
@@ -359,7 +875,7 @@
         function logout() {
             localStorage.removeItem("moggUsername");
             currentUser = null;
-            document.getElementById("auth-password").value = "";
+            document.getElementById("guest-username").value = "";
             checkLogin();
         }
 
@@ -377,10 +893,44 @@
             }
         }
 
+        function activateFrenzy() {
+            if (isFrenzy) return;
+            isFrenzy = true;
+            document.getElementById("board").classList.add("frenzy-active");
+            document.getElementById("score").classList.add("frenzy-text");
+            originalSpawnRate = spawnRate;
+            originalStayTime = stayTime;
+            spawnRate = 150; 
+            stayTime = 400;
+            
+            // Use custom toast for frenzy
+            const container = document.getElementById("toast-container");
+            const toast = document.createElement("div");
+            toast.className = "room-toast";
+            toast.style.background = "linear-gradient(135deg, #e74c3c, #8e44ad)";
+            toast.style.borderColor = "#f1c40f";
+            toast.innerHTML = `<div class="room-toast-icon">🔥</div><div class="room-toast-content"><span class="room-toast-title" style="color:white">SUPER MASK FRENZY!</span><span class="room-toast-message" style="color:gold">NO CACTUSES!</span></div>`;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 4000);
+
+            clearTimeout(frenzyTimeout);
+            frenzyTimeout = setTimeout(() => {
+                isFrenzy = false;
+                document.getElementById("board").classList.remove("frenzy-active");
+                document.getElementById("score").classList.remove("frenzy-text");
+                spawnRate = originalSpawnRate;
+                stayTime = originalStayTime;
+            }, 10000);
+        }
+
         function startGame() {
             score = 0; level = 1; spawnRate = 600; stayTime = 1000; isOver = false;
             combo = 0; multiplier = 1; isPaused = false; missesThisGame = 0;
-            recentMoggs.fill(false); 
+            recentMoggs.fill(false);
+            isFrenzy = false;
+            clearTimeout(frenzyTimeout);
+            document.getElementById("board").classList.remove("frenzy-active");
+            document.getElementById("score").classList.remove("frenzy-text");
             document.getElementById("score").innerText = "0";
             document.getElementById("lvl").innerText = "1";
             document.getElementById("combo").innerText = "0";
@@ -388,56 +938,79 @@
             document.getElementById("loading-screen").style.display = "none";
             document.getElementById("game-over-screen").style.display = "none";
             document.getElementById("game-area").style.display = "block";
-            
-            /* UPDATED: NEW GIF ID REFERENCE */
-            document.getElementById("menu-gif").style.display = "none"; 
-            
+            document.getElementById("menu-gif").style.display = "none";
             document.getElementById("bg-music").volume = 0.2;
-            document.getElementById("bg-music").play().catch(e => {});
+            document.getElementById("bg-music").play().catch(e => { });
             createBoard(); gameLoop();
         }
 
         function pauseGame() {
-            if(isOver || isPaused) return;
-            isPaused = true; clearTimeout(gameTimer); 
+            if (isOver || isPaused) return;
+            isPaused = true; clearTimeout(gameTimer);
             document.getElementById("bg-music").pause();
             document.getElementById("pause-screen").style.display = "flex";
         }
 
         function resumeGame() {
             isPaused = false; document.getElementById("pause-screen").style.display = "none";
-            document.getElementById("bg-music").play().catch(()=>{}); gameLoop(); 
+            document.getElementById("bg-music").play().catch(() => { }); gameLoop();
         }
 
         function quitGame() {
-            isPaused = false; document.getElementById("pause-screen").style.display = "none"; endGame(); 
+            isPaused = false; document.getElementById("pause-screen").style.display = "none"; endGame();
         }
 
         function gameLoop() {
-            if(isOver || isPaused) return; 
+            if (isOver || isPaused) return;
             spawnSingleEntity();
             let nextSpawn = Math.max(200, spawnRate + (Math.random() * 200 - 100));
             gameTimer = setTimeout(gameLoop, nextSpawn);
         }
 
         function spawnSingleEntity() {
-            if(isOver || isPaused) return; 
+            if (isOver || isPaused) return;
             let emptySpots = [];
-            for(let i=0; i<9; i++) {
+            for (let i = 0; i < 9; i++) {
                 let m = document.getElementById("m" + i);
-                if(m && m.dataset.type === "empty" && !m.dataset.isBusy) emptySpots.push(i);
+                if (m && m.dataset.type === "empty" && !m.dataset.isBusy) emptySpots.push(i);
             }
-            if(emptySpots.length === 0) return;
+            if (emptySpots.length === 0) return;
+            
             let pos = emptySpots[Math.floor(Math.random() * emptySpots.length)];
             let mask = document.getElementById("m" + pos);
-            let cactusChance = recentMoggs[pos] ? 0.46 : (level > 1 ? Math.min(0.5, level * 0.1) : 0.06);
-            let type = Math.random() < cactusChance ? "cactus" : (Math.random() < 0.05 ? "bonus" : "mogg");
+            let type;
+            
+            if (isFrenzy) {
+                type = Math.random() < 0.3 ? "bonus" : "mogg";
+            } else {
+                let cactusChance = recentMoggs[pos] ? 0.46 : (level > 1 ? Math.min(0.5, level * 0.1) : 0.06);
+                let maskChance = level >= 3 ? 0.02 : 0; 
+                let roll = Math.random();
+                if (roll < maskChance) {
+                    type = "super_mask";
+                } else if (roll < maskChance + cactusChance) {
+                    type = "cactus";
+                } else if (roll < maskChance + cactusChance + 0.05) {
+                    type = "bonus";
+                } else {
+                    type = "mogg";
+                }
+            }
+
             recentMoggs[pos] = (type === "mogg");
             let img = document.createElement("img");
-            img.src = type === "bonus" ? ASSETS.BONUS : (type === "cactus" ? ASSETS.CACTUS : ASSETS.MOGG);
-            mask.dataset.type = type; mask.dataset.isBusy = "true"; mask.appendChild(img);
+            
+            if (type === "bonus") img.src = ASSETS.BONUS;
+            else if (type === "cactus") img.src = ASSETS.CACTUS;
+            else if (type === "super_mask") img.src = ASSETS.SUPER_MASK;
+            else img.src = ASSETS.MOGG;
+
+            mask.dataset.type = type; 
+            mask.dataset.isBusy = "true"; 
+            mask.appendChild(img);
+            
             mask.dataset.timerId = setTimeout(() => {
-                if(!isOver && mask.dataset.type === type) hideCharacter(mask, img);
+                if (!isOver && mask.dataset.type === type) hideCharacter(mask, img);
             }, stayTime);
         }
 
@@ -449,34 +1022,42 @@
             setTimeout(() => floatMsg.remove(), 500);
         }
 
-        function handleHit(id) {
-            if(isOver || isPaused) return; 
+        function handleHit(id, hitCharacter = false) {
+            if (isOver || isPaused) return;
             const mask = document.getElementById("m" + id);
-            const tile = document.getElementById("t" + id); 
+            const tile = document.getElementById("t" + id);
             const type = mask.dataset.type;
-            if(type === "empty") {
+            
+            if (!hitCharacter || type === "empty") {
                 document.getElementById("sfx-miss").currentTime = 0;
-                document.getElementById("sfx-miss").play().catch(()=>{});
+                document.getElementById("sfx-miss").play().catch(() => { });
                 combo = 0; multiplier = 1;
                 document.getElementById("combo").innerText = combo;
                 document.getElementById("mult").innerText = "";
                 missesThisGame++;
-                if(missesThisGame >= 5) triggerAchievement("oops");
+                if (missesThisGame >= 5) triggerAchievement("oops");
                 showFloatingText(tile, "MISS!", "gold"); return;
             }
+            
             clearTimeout(parseInt(mask.dataset.timerId));
-            if(type === "mogg" || type === "bonus") {
-                if(score === 0) triggerAchievement("first_blood");
+            
+            if (type === "mogg" || type === "bonus" || type === "super_mask") {
+                if (type === "super_mask") activateFrenzy();
+                if (score === 0) triggerAchievement("first_blood");
                 combo++;
                 multiplier = Math.min(5, Math.floor(combo / 10) + 1);
                 document.getElementById("combo").innerText = combo;
                 document.getElementById("mult").innerText = multiplier > 1 ? `(x${multiplier})` : "";
-                let points = (type === "bonus" ? 5 : 1) * multiplier;
+                
+                let basePoints = (type === "bonus" ? 5 : (type === "super_mask" ? 15 : 1));
+                let points = basePoints * multiplier;
+                
                 score += points;
                 document.getElementById("score").innerText = score;
                 document.getElementById("sfx-hit").currentTime = 0;
-                document.getElementById("sfx-hit").play().catch(()=>{});
-                showFloatingText(tile, "+" + points, type === "bonus" ? "#ffcc00" : "#8de21d");
+                document.getElementById("sfx-hit").play().catch(() => { });
+                showFloatingText(tile, "+" + points, type === "bonus" ? "#ffcc00" : (type === "super_mask" ? "#ff00ff" : "#8de21d"));
+                
                 const activeHammer = SHOP_ITEMS.find(h => h.id === currentHammerId) || SHOP_ITEMS[0];
                 const h = document.createElement("div");
                 h.className = "hammer-animation";
@@ -484,34 +1065,47 @@
                 tile.appendChild(h);
                 setTimeout(() => h.remove(), 500);
                 hideCharacter(mask, mask.querySelector("img"));
+                
                 level = Math.floor(score / 10) + 1;
                 document.getElementById("lvl").innerText = level;
-                spawnRate = Math.max(150, 600 - (level * 50));
-                stayTime = Math.max(350, 1000 - (level * 65));
-            } else { endGame(); } 
+                
+                if (!isFrenzy) {
+                    spawnRate = Math.max(150, 600 - (level * 50));
+                    stayTime = Math.max(350, 1000 - (level * 65));
+                }
+            } else { endGame(); }
         }
 
         function hideCharacter(mask, img) {
-            if(img) img.classList.add("hide");
+            if (img) img.classList.add("hide");
             mask.dataset.type = "empty";
-            setTimeout(() => { if(img) img.remove(); mask.dataset.isBusy = ""; }, 150);
+            setTimeout(() => { if (img) img.remove(); mask.dataset.isBusy = ""; }, 150);
         }
 
         function createBoard() {
             const b = document.getElementById("board"); b.innerHTML = "";
-            for(let i=0; i<9; i++) {
-                let t = document.createElement("div"); t.id = "t" + i; t.className = "tile"; t.onmousedown = () => handleHit(i);
-                let m = document.createElement("div"); m.className = "character-mask"; m.id = "m" + i; m.dataset.type = "empty";
+            for (let i = 0; i < 9; i++) {
+                let t = document.createElement("div"); 
+                t.id = "t" + i; 
+                t.className = "tile"; 
+                t.onmousedown = (e) => { e.preventDefault(); handleHit(i, false); };
+                
+                let m = document.createElement("div"); 
+                m.className = "character-mask"; 
+                m.id = "m" + i; 
+                m.dataset.type = "empty";
+                m.onmousedown = (e) => { e.preventDefault(); e.stopPropagation(); handleHit(i, true); };
+
                 t.appendChild(m); b.appendChild(t);
             }
         }
 
-       function endGame() {
+        function endGame() {
             isOver = true; clearTimeout(gameTimer);
             document.getElementById("damage-overlay").classList.add("flash-red");
             document.getElementById("board").classList.add("shake");
             document.getElementById("bg-music").pause();
-            document.getElementById("sfx-over").play().catch(()=>{});
+            document.getElementById("sfx-over").play().catch(() => { });
             coins += score === 0 ? 1 : score;
             saveUserData();
             setTimeout(() => {
@@ -520,8 +1114,6 @@
                 document.getElementById("final-score").innerHTML = `${score} 🍌`;
                 document.getElementById("game-area").style.display = "none";
                 document.getElementById("game-over-screen").style.display = "flex";
-                
-                /* UPDATED: NEW GIF ID REFERENCE */
                 document.getElementById("menu-gif").style.display = "block";
 
                 if (score > 0) submitScore().then(() => updateUI());
@@ -530,32 +1122,71 @@
         }
 
         async function submitScore() {
-            if(!currentUser) return;
+            if (!currentUser) return;
             try {
-                await fetch(`${API_URL}/scores`, {
+                const endpoint = currentRoomPasscode ? `/rooms/${currentRoomPasscode}/scores` : `/scores`;
+                
+                await fetch(`${API_URL}${endpoint}`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ playerName: currentUser, score: score }) 
+                    body: JSON.stringify({ playerName: currentUser, score: score })
                 });
+                
+                if (currentRoomPasscode) {
+                    await fetch(`${API_URL}/scores`, {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ playerName: currentUser, score: score })
+                    });
+                }
+                
                 document.getElementById("save-status").innerText = "✅ Score Auto-Saved!";
-            } catch(e) { document.getElementById("save-status").innerText = "❌ Connection Failed!"; }
+            } catch (e) { document.getElementById("save-status").innerText = "❌ Connection Failed!"; }
         }
 
         async function showLeaderboard() {
+            if (document.getElementById("game-over-screen").style.display === "flex") {
+                leaderboardOrigin = "game-over-screen";
+                document.getElementById("game-over-screen").style.display = "none";
+            } else {
+                leaderboardOrigin = "loading-screen";
+                document.getElementById("loading-screen").style.display = "none";
+            }
+
             document.getElementById("leaderboard-screen").style.display = "flex";
             const list = document.getElementById("leaderboard-list");
             list.innerHTML = "Fetching...";
+            
+            const title = document.getElementById("leaderboard-title");
+            title.innerText = currentRoomPasscode ? `🚪 ROOM: ${currentRoomPasscode}` : "🌍 LEADERBOARD";
+            title.style.color = currentRoomPasscode ? "#3498db" : "gold";
+            
             try {
-                const res = await fetch(`${API_URL}/leaderboard`);
+                const endpoint = currentRoomPasscode ? `/rooms/${currentRoomPasscode}/leaderboard` : `/leaderboard`;
+                const res = await fetch(`${API_URL}${endpoint}`);
+                
+                if (!res.ok) { throw new Error("Room expired"); }
+                
                 const data = await res.json();
-                list.innerHTML = data.map((e, i) => `
-                    <div class="${e.playerName === currentUser ? 'score-entry is-me' : 'score-entry'}">
-                        <span><b style="color:gold">#${i+1}</b> ${e.playerName}</span>
-                        <span style="color:#8de21d;font-weight:bold">${e.score} 🍌</span>
-                    </div>`).join("");
-            } catch(e) { list.innerHTML = "Error loading."; }
+                
+                if (data.length === 0) {
+                    list.innerHTML = "<div style='color:#aaa; text-align:center;'>No scores yet! Be the first!</div>";
+                } else {
+                    list.innerHTML = data.map((e, i) => `
+                        <div class="${e.playerName === currentUser ? 'score-entry is-me' : 'score-entry'}">
+                            <span><b style="color:gold">#${i + 1}</b> ${e.playerName}</span>
+                            <span style="color:#8de21d;font-weight:bold">${e.score} 🍌</span>
+                        </div>`).join("");
+                }
+            } catch (e) { 
+                list.innerHTML = "Error loading or Room Expired."; 
+                if (currentRoomPasscode) leaveRoom(); 
+            }
         }
 
-        function closeLeaderboard() { document.getElementById("leaderboard-screen").style.display = "none"; }
+        function closeLeaderboard() { 
+            document.getElementById("leaderboard-screen").style.display = "none"; 
+            document.getElementById(leaderboardOrigin).style.display = "flex";
+        }
+
         function backToMenu() { document.getElementById("game-over-screen").style.display = "none"; document.getElementById("loading-screen").style.display = "flex"; updateUI(); }
 
         function renderShop() {
@@ -564,21 +1195,25 @@
                 const isUnlocked = unlockedHammers.includes(item.id);
                 const isEquipped = currentHammerId === item.id;
                 let btn = isEquipped ? `<button class="shop-btn equipped" style="background:#555">EQUIPPED</button>` :
-                          isUnlocked ? `<button class="shop-btn" style="background:#8de21d" onclick="equipHammer('${item.id}')">EQUIP</button>` :
-                          `<button class="shop-btn" style="background:#ffcc00" onclick="buyHammer('${item.id}', ${item.cost})" ${coins < item.cost ? 'disabled' : ''}>BUY 🍌${item.cost}</button>`;
+                    isUnlocked ? `<button class="btn btn-blue" onclick="equipHammer('${item.id}')">EQUIP</button>` :
+                        `<button class="btn btn-orange" onclick="buyHammer('${item.id}', ${item.cost})" ${coins < item.cost ? 'disabled' : ''}>BUY 🍌${item.cost}</button>`;
                 const s = document.createElement("div");
                 s.className = `tool-slot ${isEquipped ? 'equipped-slot' : ''}`;
                 s.innerHTML = `<img src="${item.img}"><h3>${item.name}</h3>${btn}`;
                 grid.appendChild(s);
             });
         }
-        
-        function buyHammer(id, cost) { if(coins >= cost) { coins -= cost; unlockedHammers.push(id); saveUserData(); equipHammer(id); } }
+
+        function buyHammer(id, cost) { if (coins >= cost) { coins -= cost; unlockedHammers.push(id); saveUserData(); equipHammer(id); } }
         function equipHammer(id) { currentHammerId = id; saveUserData(); renderShop(); }
         function openShop() { document.getElementById("loading-screen").style.display = "none"; document.getElementById("shop-screen").style.display = "flex"; renderShop(); }
         function closeShop() { document.getElementById("shop-screen").style.display = "none"; document.getElementById("loading-screen").style.display = "flex"; updateUI(); }
 
-        window.onload = checkLogin;
+        window.onload = () => {
+            preloadAssets();
+            checkLogin();
+        };
     </script>
 </body>
+
 </html>
