@@ -51,13 +51,13 @@
             text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.5);
         }
 
-        .btn:hover {
+        .btn:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 8px 0 #5c990f, 0 12px 20px rgba(0, 0, 0, 0.5);
             filter: brightness(1.05);
         }
 
-        .btn:active {
+        .btn:active:not(:disabled) {
             transform: translateY(6px) !important;
             box-shadow: 0 0 0 #5c990f, 0 2px 5px rgba(0, 0, 0, 0.5) !important;
         }
@@ -70,8 +70,8 @@
             text-shadow: 1px 1px 0px #1a5276;
             box-shadow: 0 6px 0 #2980b9, 0 10px 15px rgba(0,0,0,0.4);
         }
-        .btn-blue:hover { box-shadow: 0 8px 0 #2980b9, 0 12px 20px rgba(0,0,0,0.5); }
-        .btn-blue:active { box-shadow: 0 0 0 #2980b9, 0 2px 5px rgba(0,0,0,0.4); }
+        .btn-blue:hover:not(:disabled) { box-shadow: 0 8px 0 #2980b9, 0 12px 20px rgba(0,0,0,0.5); }
+        .btn-blue:active:not(:disabled) { box-shadow: 0 0 0 #2980b9, 0 2px 5px rgba(0,0,0,0.4); }
 
         .btn-purple {
             background: linear-gradient(to bottom, #af7ac5, #9b59b6);
@@ -80,8 +80,8 @@
             text-shadow: 1px 1px 0px #5b2c6f;
             box-shadow: 0 6px 0 #8e44ad, 0 10px 15px rgba(0,0,0,0.4);
         }
-        .btn-purple:hover { box-shadow: 0 8px 0 #8e44ad, 0 12px 20px rgba(0,0,0,0.5); }
-        .btn-purple:active { box-shadow: 0 0 0 #8e44ad, 0 2px 5px rgba(0,0,0,0.4); }
+        .btn-purple:hover:not(:disabled) { box-shadow: 0 8px 0 #8e44ad, 0 12px 20px rgba(0,0,0,0.5); }
+        .btn-purple:active:not(:disabled) { box-shadow: 0 0 0 #8e44ad, 0 2px 5px rgba(0,0,0,0.4); }
 
         .btn-orange {
             background: linear-gradient(to bottom, #f39c12, #e67e22);
@@ -90,8 +90,8 @@
             text-shadow: 1px 1px 0px #873600;
             box-shadow: 0 6px 0 #d35400, 0 10px 15px rgba(0,0,0,0.4);
         }
-        .btn-orange:hover { box-shadow: 0 8px 0 #d35400, 0 12px 20px rgba(0,0,0,0.5); }
-        .btn-orange:active { box-shadow: 0 0 0 #d35400, 0 2px 5px rgba(0,0,0,0.4); }
+        .btn-orange:hover:not(:disabled) { box-shadow: 0 8px 0 #d35400, 0 12px 20px rgba(0,0,0,0.5); }
+        .btn-orange:active:not(:disabled) { box-shadow: 0 0 0 #d35400, 0 2px 5px rgba(0,0,0,0.4); }
 
         .btn-red {
             background: linear-gradient(to bottom, #e74c3c, #c0392b);
@@ -100,8 +100,8 @@
             text-shadow: 1px 1px 0px #641e16;
             box-shadow: 0 6px 0 #922b21, 0 10px 15px rgba(0,0,0,0.4);
         }
-        .btn-red:hover { box-shadow: 0 8px 0 #922b21, 0 12px 20px rgba(0,0,0,0.5); }
-        .btn-red:active { box-shadow: 0 0 0 #922b21, 0 2px 5px rgba(0,0,0,0.4); }
+        .btn-red:hover:not(:disabled) { box-shadow: 0 8px 0 #922b21, 0 12px 20px rgba(0,0,0,0.5); }
+        .btn-red:active:not(:disabled) { box-shadow: 0 0 0 #922b21, 0 2px 5px rgba(0,0,0,0.4); }
 
         .btn-menu {
             background: linear-gradient(to bottom, #777, #555);
@@ -110,10 +110,9 @@
             text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.8);
             box-shadow: 0 6px 0 #333, 0 10px 15px rgba(0, 0, 0, 0.4);
         }
-        .btn-menu:hover { box-shadow: 0 8px 0 #333, 0 12px 20px rgba(0, 0, 0, 0.5); }
-        .btn-menu:active { box-shadow: 0 0 0 #333, 0 2px 5px rgba(0, 0, 0, 0.4); }
+        .btn-menu:hover:not(:disabled) { box-shadow: 0 8px 0 #333, 0 12px 20px rgba(0, 0, 0, 0.5); }
+        .btn-menu:active:not(:disabled) { box-shadow: 0 0 0 #333, 0 2px 5px rgba(0, 0, 0, 0.4); }
 
-        /* Pause button styling */
         .btn-pause {
             background: linear-gradient(to bottom, #ffdb4d, #ffcc00);
             color: #000;
@@ -505,7 +504,7 @@
         <div id="coin-display" style="color: gold; margin: 15px 0; font-size: 2.5rem; font-weight: bold; text-shadow: 2px 2px 4px #000;">0 🍌</div>
 
         <div style="margin-bottom: 15px;">
-            <button class="btn" style="padding: 15px 80px; font-size: 1.8rem;" onclick="startGame()">▶️ START</button>
+            <button id="start-btn" class="btn" style="padding: 15px 80px; font-size: 1.8rem;" onclick="startGame()">▶️ START</button>
         </div>
         
         <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; max-width: 450px;">
@@ -544,7 +543,7 @@
         <h2 id="final-score" style="color: gold; font-size: 5rem; text-shadow: 5px 5px 0 #000; margin: 10px 0;">0 🍌</h2>
         <div id="save-status" style="color: gold; margin-bottom: 30px; font-weight: bold; font-size: 1.5rem; text-shadow: 2px 2px #000;">Saving score...</div>
         <div style="display: flex; flex-direction: column; gap: 10px; width: 280px;">
-            <button class="btn" onclick="startGame()">↻ REPLAY</button>
+            <button id="replay-btn" class="btn" onclick="startGame()">↻ REPLAY</button>
             <button class="btn btn-blue" onclick="showLeaderboard()">🌍 LEADERBOARD</button>
             <button class="btn btn-menu" onclick="backToMenu()">🏠 MENU</button>
         </div>
@@ -587,6 +586,7 @@
 
         let currentUser = localStorage.getItem("moggUsername");
         let currentRoomPasscode = null;
+        let hasPlayedCurrentRoom = false; // NEW: TRACKS 1-TRY LIMIT
 
         const ASSETS = { 
             MOGG: "mogg3.gif", 
@@ -631,7 +631,6 @@
             });
         }
 
-        // --- EXISTING GOLDEN TOAST FOR ACHIEVEMENTS ---
         function showToast(title, reward) {
             const container = document.getElementById("toast-container");
             const toast = document.createElement("div");
@@ -641,7 +640,6 @@
             setTimeout(() => toast.remove(), 4000);
         }
 
-        // --- NEW: DEDICATED ROOM TOAST ---
         function showRoomToast(title, message) {
             const container = document.getElementById("toast-container");
             const toast = document.createElement("div");
@@ -700,6 +698,38 @@
             document.getElementById("loading-screen").style.display = "flex";
         }
 
+        // --- NEW ONE-TRY ROOM CHECK LOGIC ---
+        async function checkRoomStatus() {
+            if (!currentRoomPasscode || !currentUser) {
+                hasPlayedCurrentRoom = false;
+                updateStartButton();
+                return;
+            }
+            try {
+                const res = await fetch(`${API_URL}/rooms/${currentRoomPasscode}/hasPlayed/${encodeURIComponent(currentUser)}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    hasPlayedCurrentRoom = data.hasPlayed;
+                }
+            } catch(e) { console.error("Could not check room status."); }
+            updateStartButton();
+        }
+
+        function updateStartButton() {
+            const startBtn = document.getElementById("start-btn");
+            if (currentRoomPasscode && hasPlayedCurrentRoom) {
+                startBtn.innerText = "🚫 ALREADY PLAYED";
+                startBtn.disabled = true;
+                startBtn.style.filter = "grayscale(100%)";
+                startBtn.style.cursor = "not-allowed";
+            } else {
+                startBtn.innerText = "▶️ START";
+                startBtn.disabled = false;
+                startBtn.style.filter = "none";
+                startBtn.style.cursor = "pointer";
+            }
+        }
+
         async function createRoom() {
             try {
                 const res = await fetch(`${API_URL}/rooms`, { method: 'POST' });
@@ -708,11 +738,10 @@
                 
                 document.getElementById("room-code-display").style.display = "block";
                 document.getElementById("room-code-display").innerText = data.passcode;
-                
-                // USE NEW TOAST
                 showRoomToast("Room Activated", `CODE: ${data.passcode}`);
                 
                 updateGreeting();
+                checkRoomStatus(); // Initialize room state for creator
             } catch (e) {
                 document.getElementById("room-error").innerText = "Server Error.";
                 document.getElementById("room-error").style.display = "block";
@@ -734,11 +763,9 @@
                 if (res.ok) {
                     currentRoomPasscode = inputCode;
                     errorText.style.display = "none";
-                    
-                    // USE NEW TOAST
                     showRoomToast("Room Joined", `CODE: ${inputCode}`);
-                    
                     updateGreeting();
+                    checkRoomStatus(); // Check if they already played before letting them start
                     closeRooms();
                 } else {
                     errorText.innerText = "Room expired or doesn't exist.";
@@ -752,6 +779,8 @@
 
         function leaveRoom() {
             currentRoomPasscode = null;
+            hasPlayedCurrentRoom = false;
+            updateStartButton();
             updateGreeting();
             document.getElementById("join-room-input").value = "";
             document.getElementById("room-code-display").style.display = "none";
@@ -806,6 +835,7 @@
                 document.getElementById("loading-screen").style.display = "flex";
                 updateGreeting();
                 fetchUserData();
+                checkRoomStatus(); // Verify state on login
             } else {
                 document.getElementById("loading-screen").style.display = "none";
                 document.getElementById("login-screen").style.display = "flex";
@@ -839,7 +869,6 @@
                     currentUser = data.username; 
                     
                     if (data.isReturning) {
-                        // Use original gold toast for Welcome Back
                         const container = document.getElementById("toast-container");
                         const toast = document.createElement("div");
                         toast.className = "toast";
@@ -847,7 +876,6 @@
                         container.appendChild(toast);
                         setTimeout(() => toast.remove(), 3000);
                     }
-                    
                     checkLogin();
                 } else {
                     errorText.innerText = await res.text();
@@ -903,7 +931,6 @@
             spawnRate = 150; 
             stayTime = 400;
             
-            // Use custom toast for frenzy
             const container = document.getElementById("toast-container");
             const toast = document.createElement("div");
             toast.className = "room-toast";
@@ -924,6 +951,8 @@
         }
 
         function startGame() {
+            if (currentRoomPasscode && hasPlayedCurrentRoom) return; // Hard lock bypass attempt
+            
             score = 0; level = 1; spawnRate = 600; stayTime = 1000; isOver = false;
             combo = 0; multiplier = 1; isPaused = false; missesThisGame = 0;
             recentMoggs.fill(false);
@@ -1115,6 +1144,15 @@
                 document.getElementById("game-area").style.display = "none";
                 document.getElementById("game-over-screen").style.display = "flex";
                 document.getElementById("menu-gif").style.display = "block";
+
+                // --- 1-TRY LOGIC HIDE REPLAY ---
+                if (currentRoomPasscode) {
+                    hasPlayedCurrentRoom = true;
+                    document.getElementById("replay-btn").style.display = "none"; 
+                    updateStartButton(); // Locks "Start" button for menu
+                } else {
+                    document.getElementById("replay-btn").style.display = "block"; 
+                }
 
                 if (score > 0) submitScore().then(() => updateUI());
                 else updateUI();
