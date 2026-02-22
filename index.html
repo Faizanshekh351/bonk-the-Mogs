@@ -16,8 +16,6 @@
             color: white;
             margin: 0;
             overflow: hidden;
-
-            /* UI/UX POLISH */
             height: 100dvh;
             width: 100vw;
             user-select: none;
@@ -26,7 +24,6 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* --- UPGRADED BUTTON UI/UX --- */
         .btn, .btn-pause, .tab-btn, .shop-btn, .tile, .character-mask {
             user-select: none;
             -webkit-user-select: none;
@@ -62,7 +59,6 @@
             box-shadow: 0 0 0 #5c990f, 0 2px 5px rgba(0, 0, 0, 0.5) !important;
         }
 
-        /* Color Variations for Buttons */
         .btn-blue {
             background: linear-gradient(to bottom, #5dade2, #3498db);
             border-color: #2980b9;
@@ -340,7 +336,6 @@
             max-width: 400px;
         }
 
-        /* Original Achievement Toast */
         .toast {
             background: linear-gradient(135deg, #ffdb4d, #ffcc00);
             color: #000;
@@ -357,7 +352,6 @@
             text-align: left;
         }
 
-        /* --- NEW ROOM TOAST STYLE --- */
         .room-toast {
             background: linear-gradient(135deg, #3498db, #8e44ad);
             color: white;
@@ -500,6 +494,15 @@
         
         <button id="leave-room-btn" class="btn btn-red" style="display:none; font-size: 0.8rem; padding: 8px 15px; margin-top: 10px;" onclick="leaveRoom()">❌ LEAVE ROOM</button>
         
+        <div id="host-controls" style="display:none; flex-direction:column; gap:8px; margin-top: 10px; background: rgba(0,0,0,0.5); padding: 12px; border-radius: 10px; border: 2px dashed gold; max-width: 400px;">
+            <span style="color: gold; font-weight: bold; text-shadow: 1px 1px 0 #000; margin-bottom: 5px;">👑 HOST CONTROLS</span>
+            <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+                <button id="toggle-tries-btn" class="btn btn-blue" style="font-size: 0.8rem; padding: 8px 15px;" onclick="toggleInfiniteTries()">🔓 ALLOW INFINITE TRIES</button>
+                <button class="btn btn-orange" style="font-size: 0.8rem; padding: 8px 15px;" onclick="resetRoomScores()">🔄 RESET SCORES</button>
+                <button class="btn btn-red" style="font-size: 0.8rem; padding: 8px 15px;" onclick="destroyRoom()">🗑️ CLOSE ROOM</button>
+            </div>
+        </div>
+
         <div id="hs" style="color: gold; text-shadow: 2px 2px 0 #000;font-size: 22px; margin-top: 15px;">Best: 0</div>
         <div id="coin-display" style="color: gold; margin: 15px 0; font-size: 2.5rem; font-weight: bold; text-shadow: 2px 2px 4px #000;">0 🍌</div>
 
@@ -586,7 +589,9 @@
 
         let currentUser = localStorage.getItem("moggUsername");
         let currentRoomPasscode = null;
-        let hasPlayedCurrentRoom = false; // NEW: TRACKS 1-TRY LIMIT
+        let hasPlayedCurrentRoom = false; 
+        let isRoomOwner = false; 
+        let roomAllowsInfinite = false;
 
         const ASSETS = { 
             MOGG: "mogg3.gif", 
@@ -608,19 +613,6 @@
             { id: "duck", name: "MONSTER CLAW", cost: 800, img: "hammer3.png" },
             { id: "monster", name: "Rober Baratheon", cost: 1200, img: "hammer4.png" },
             { id: "diamond", name: "Diamond Pick", cost: 2000, img: "hammer5.png" }
-        ];
-
-        const ACHIEVEMENTS = [
-            { id: "first_blood", icon: "🩸", name: "First Bonk", desc: "Score your very first point.", reward: 10 },
-            { id: "combo_master", icon: "🔥", name: "Combo Master", desc: "Reach a x5 multiplier.", reward: 500 },
-            { id: "century", icon: "💯", name: "Century", desc: "Score 100 points in a single game.", reward: 200 },
-            { id: "untouchable", icon: "⚡", name: "Untouchable", desc: "Reach a 100 Hit Combo without missing.", reward: 500 },
-            { id: "mogg_god", icon: "👑", name: "Mogg God", desc: "Survive until Level 50.", reward: 1000 },
-            { id: "rich_mogg", icon: "💰", name: "Rich Mogg", desc: "Accumulate 500 total bananas.", reward: 100 },
-            { id: "banana_baron", icon: "🏦", name: "Banana Baron", desc: "Accumulate 10,000 total bananas.", reward: 2500 },
-            { id: "collector", icon: "🛍️", name: "The Collector", desc: "Unlock every hammer in the shop.", reward: 1000 },
-            { id: "oops", icon: "👓", name: "Need Glasses?", desc: "Miss 5 times in a single game.", reward: 50 },
-            { id: "unlucky", icon: "🦇", name: "Blind as a Bat", desc: "Miss 50 times in a single game.", reward: 500 }
         ];
 
         function preloadAssets() {
@@ -686,6 +678,7 @@
         function closeAchievements() {
             document.getElementById("achievements-screen").style.display = "none";
             document.getElementById("loading-screen").style.display = "flex";
+            if (currentRoomPasscode) checkRoomStatus(); 
         }
 
         function openRooms() {
@@ -698,18 +691,32 @@
             document.getElementById("loading-screen").style.display = "flex";
         }
 
-        // --- NEW ONE-TRY ROOM CHECK LOGIC ---
+        // --- CACHE-BUSTING SYNC FUNCTION ---
         async function checkRoomStatus() {
             if (!currentRoomPasscode || !currentUser) {
                 hasPlayedCurrentRoom = false;
+                roomAllowsInfinite = false;
                 updateStartButton();
                 return;
             }
             try {
-                const res = await fetch(`${API_URL}/rooms/${currentRoomPasscode}/hasPlayed/${encodeURIComponent(currentUser)}`);
+                // Notice the "?t=..." parameter to break the browser cache!
+                const res = await fetch(`${API_URL}/rooms/${currentRoomPasscode}/hasPlayed/${encodeURIComponent(currentUser)}?t=${Date.now()}`);
                 if (res.ok) {
                     const data = await res.json();
-                    hasPlayedCurrentRoom = data.hasPlayed;
+                    hasPlayedCurrentRoom = data.hasPlayed; 
+                    roomAllowsInfinite = data.infiniteTries;
+
+                    if (isRoomOwner) {
+                        const toggleBtn = document.getElementById("toggle-tries-btn");
+                        if (roomAllowsInfinite) {
+                            toggleBtn.innerText = "🔒 SET TO 1-TRY ONLY";
+                            toggleBtn.classList.replace("btn-blue", "btn-red");
+                        } else {
+                            toggleBtn.innerText = "🔓 ALLOW INFINITE TRIES";
+                            toggleBtn.classList.replace("btn-red", "btn-blue");
+                        }
+                    }
                 }
             } catch(e) { console.error("Could not check room status."); }
             updateStartButton();
@@ -717,31 +724,50 @@
 
         function updateStartButton() {
             const startBtn = document.getElementById("start-btn");
-            if (currentRoomPasscode && hasPlayedCurrentRoom) {
+            const replayBtn = document.getElementById("replay-btn");
+
+            // Hard check: If they played, and they aren't owner, and room isn't infinite = LOCKED
+            if (currentRoomPasscode && hasPlayedCurrentRoom && !isRoomOwner && !roomAllowsInfinite) {
                 startBtn.innerText = "🚫 ALREADY PLAYED";
                 startBtn.disabled = true;
                 startBtn.style.filter = "grayscale(100%)";
                 startBtn.style.cursor = "not-allowed";
+                if(replayBtn) replayBtn.style.display = "none";
             } else {
                 startBtn.innerText = "▶️ START";
                 startBtn.disabled = false;
                 startBtn.style.filter = "none";
                 startBtn.style.cursor = "pointer";
+                if(replayBtn) replayBtn.style.display = "block";
             }
         }
 
+        // --- IMPROVED BACKGROUND SYNC LOOP ---
+        // Runs continuously in the background to catch Host changes instantly
+        setInterval(() => {
+            if (currentRoomPasscode) {
+                checkRoomStatus();
+            }
+        }, 2000);
+
         async function createRoom() {
             try {
-                const res = await fetch(`${API_URL}/rooms`, { method: 'POST' });
+                const res = await fetch(`${API_URL}/rooms`, { 
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: currentUser }) 
+                });
                 const data = await res.json();
+                
                 currentRoomPasscode = data.passcode;
+                isRoomOwner = true; 
                 
                 document.getElementById("room-code-display").style.display = "block";
                 document.getElementById("room-code-display").innerText = data.passcode;
                 showRoomToast("Room Activated", `CODE: ${data.passcode}`);
                 
                 updateGreeting();
-                checkRoomStatus(); // Initialize room state for creator
+                checkRoomStatus(); 
             } catch (e) {
                 document.getElementById("room-error").innerText = "Server Error.";
                 document.getElementById("room-error").style.display = "block";
@@ -762,10 +788,11 @@
                 const res = await fetch(`${API_URL}/rooms/${inputCode}`);
                 if (res.ok) {
                     currentRoomPasscode = inputCode;
+                    isRoomOwner = false; 
                     errorText.style.display = "none";
                     showRoomToast("Room Joined", `CODE: ${inputCode}`);
                     updateGreeting();
-                    checkRoomStatus(); // Check if they already played before letting them start
+                    checkRoomStatus(); 
                     closeRooms();
                 } else {
                     errorText.innerText = "Room expired or doesn't exist.";
@@ -777,9 +804,54 @@
             }
         }
 
+        async function toggleInfiniteTries() {
+            if (!currentRoomPasscode || !isRoomOwner) return;
+            try {
+                const res = await fetch(`${API_URL}/rooms/${currentRoomPasscode}/toggle-tries`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: currentUser })
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    roomAllowsInfinite = data.infiniteTries;
+                    showRoomToast("RULE CHANGED", roomAllowsInfinite ? "Infinite Tries Enabled!" : "1-Try Limit Enabled!");
+                    checkRoomStatus(); 
+                }
+            } catch (e) { console.error("Could not toggle tries"); }
+        }
+
+        async function resetRoomScores() {
+            if (!currentRoomPasscode || !isRoomOwner) return;
+            try {
+                await fetch(`${API_URL}/rooms/${currentRoomPasscode}/reset`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: currentUser })
+                });
+                showRoomToast("SCORES RESET", "Round 2 Started!");
+                checkRoomStatus();
+            } catch(e) { console.error("Could not reset scores"); }
+        }
+
+        async function destroyRoom() {
+            if (!currentRoomPasscode || !isRoomOwner) return;
+            try {
+                await fetch(`${API_URL}/rooms/${currentRoomPasscode}/destroy`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: currentUser })
+                });
+                showRoomToast("ROOM CLOSED", "Returned to Lobby");
+                leaveRoom();
+            } catch(e) { console.error("Could not destroy room"); }
+        }
+
         function leaveRoom() {
             currentRoomPasscode = null;
+            isRoomOwner = false;
             hasPlayedCurrentRoom = false;
+            roomAllowsInfinite = false;
             updateStartButton();
             updateGreeting();
             document.getElementById("join-room-input").value = "";
@@ -789,15 +861,24 @@
         function updateGreeting() {
             const greetingElement = document.getElementById("player-greeting");
             const leaveBtn = document.getElementById("leave-room-btn");
+            const hostControls = document.getElementById("host-controls");
             
             if (currentRoomPasscode) {
-                greetingElement.innerText = `PLAYING AS: ${currentUser.toUpperCase()} | ROOM: ${currentRoomPasscode}`;
-                greetingElement.style.color = "#3498db";
+                if (isRoomOwner) {
+                    greetingElement.innerText = `👑 HOST: ${currentUser.toUpperCase()} | ROOM: ${currentRoomPasscode}`;
+                    greetingElement.style.color = "gold";
+                    hostControls.style.display = "flex";
+                } else {
+                    greetingElement.innerText = `PLAYING AS: ${currentUser.toUpperCase()} | ROOM: ${currentRoomPasscode}`;
+                    greetingElement.style.color = "#3498db";
+                    hostControls.style.display = "none";
+                }
                 leaveBtn.style.display = "inline-block";
             } else {
                 greetingElement.innerText = `PLAYING AS: ${currentUser.toUpperCase()}`;
                 greetingElement.style.color = "#aaa";
                 leaveBtn.style.display = "none";
+                hostControls.style.display = "none";
             }
         }
 
@@ -835,7 +916,7 @@
                 document.getElementById("loading-screen").style.display = "flex";
                 updateGreeting();
                 fetchUserData();
-                checkRoomStatus(); // Verify state on login
+                checkRoomStatus(); 
             } else {
                 document.getElementById("loading-screen").style.display = "none";
                 document.getElementById("login-screen").style.display = "flex";
@@ -951,7 +1032,7 @@
         }
 
         function startGame() {
-            if (currentRoomPasscode && hasPlayedCurrentRoom) return; // Hard lock bypass attempt
+            if (currentRoomPasscode && hasPlayedCurrentRoom && !isRoomOwner && !roomAllowsInfinite) return; 
             
             score = 0; level = 1; spawnRate = 600; stayTime = 1000; isOver = false;
             combo = 0; multiplier = 1; isPaused = false; missesThisGame = 0;
@@ -1137,6 +1218,7 @@
             document.getElementById("sfx-over").play().catch(() => { });
             coins += score === 0 ? 1 : score;
             saveUserData();
+            
             setTimeout(() => {
                 document.getElementById("board").classList.remove("shake");
                 document.getElementById("damage-overlay").classList.remove("flash-red");
@@ -1145,17 +1227,29 @@
                 document.getElementById("game-over-screen").style.display = "flex";
                 document.getElementById("menu-gif").style.display = "block";
 
-                // --- 1-TRY LOGIC HIDE REPLAY ---
+                // Update lock status locally, but NEVER lock if the room rule is infinite
                 if (currentRoomPasscode) {
-                    hasPlayedCurrentRoom = true;
-                    document.getElementById("replay-btn").style.display = "none"; 
-                    updateStartButton(); // Locks "Start" button for menu
+                    if (!roomAllowsInfinite) {
+                        hasPlayedCurrentRoom = true; 
+                    }
+                    if (!isRoomOwner && !roomAllowsInfinite) {
+                        document.getElementById("replay-btn").style.display = "none"; 
+                    } else {
+                        document.getElementById("replay-btn").style.display = "block"; 
+                    }
+                    updateStartButton();
                 } else {
                     document.getElementById("replay-btn").style.display = "block"; 
                 }
 
-                if (score > 0) submitScore().then(() => updateUI());
-                else updateUI();
+                if (score > 0) {
+                    submitScore().then(() => {
+                        updateUI();
+                        if (currentRoomPasscode) checkRoomStatus(); 
+                    });
+                } else {
+                    updateUI();
+                }
             }, 500);
         }
 
@@ -1223,9 +1317,15 @@
         function closeLeaderboard() { 
             document.getElementById("leaderboard-screen").style.display = "none"; 
             document.getElementById(leaderboardOrigin).style.display = "flex";
+            if (currentRoomPasscode) checkRoomStatus(); 
         }
 
-        function backToMenu() { document.getElementById("game-over-screen").style.display = "none"; document.getElementById("loading-screen").style.display = "flex"; updateUI(); }
+        function backToMenu() { 
+            document.getElementById("game-over-screen").style.display = "none"; 
+            document.getElementById("loading-screen").style.display = "flex"; 
+            updateUI(); 
+            if (currentRoomPasscode) checkRoomStatus(); 
+        }
 
         function renderShop() {
             const grid = document.getElementById("shop-grid"); grid.innerHTML = "";
@@ -1245,7 +1345,13 @@
         function buyHammer(id, cost) { if (coins >= cost) { coins -= cost; unlockedHammers.push(id); saveUserData(); equipHammer(id); } }
         function equipHammer(id) { currentHammerId = id; saveUserData(); renderShop(); }
         function openShop() { document.getElementById("loading-screen").style.display = "none"; document.getElementById("shop-screen").style.display = "flex"; renderShop(); }
-        function closeShop() { document.getElementById("shop-screen").style.display = "none"; document.getElementById("loading-screen").style.display = "flex"; updateUI(); }
+        
+        function closeShop() { 
+            document.getElementById("shop-screen").style.display = "none"; 
+            document.getElementById("loading-screen").style.display = "flex"; 
+            updateUI(); 
+            if (currentRoomPasscode) checkRoomStatus(); 
+        }
 
         window.onload = () => {
             preloadAssets();
