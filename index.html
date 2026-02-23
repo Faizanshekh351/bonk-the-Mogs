@@ -614,7 +614,19 @@
             { id: "monster", name: "Rober Baratheon", cost: 1200, img: "hammer4.png" },
             { id: "diamond", name: "Diamond Pick", cost: 2000, img: "hammer5.png" }
         ];
-
+const ACHIEVEMENTS = [
+            { id: "first_blood", icon: "🩸", name: "First Bonk", desc: "Score your very first point.", reward: 10 },
+            { id: "combo_master", icon: "🔥", name: "Combo Master", desc: "Reach a x5 multiplier.", reward: 500 },
+            { id: "century", icon: "💯", name: "Century", desc: "Score 100 points in a single game.", reward: 200 },
+            { id: "untouchable", icon: "⚡", name: "Untouchable", desc: "Reach a 100 Hit Combo without missing.", reward: 500 },
+            { id: "mogg_god", icon: "👑", name: "Mogg God", desc: "Survive until Level 50.", reward: 1000 },
+            { id: "rich_mogg", icon: "💰", name: "Rich Mogg", desc: "Accumulate 500 total bananas.", reward: 100 },
+            { id: "banana_baron", icon: "🏦", name: "Banana Baron", desc: "Accumulate 10,000 total bananas.", reward: 2500 },
+            { id: "collector", icon: "🛍️", name: "The Collector", desc: "Unlock every hammer in the shop.", reward: 1000 },
+            { id: "oops", icon: "👓", name: "Need Glasses?", desc: "Miss 5 times in a single game.", reward: 50 },
+            { id: "unlucky", icon: "🦇", name: "Blind as a Bat", desc: "Miss 50 times in a single game.", reward: 500 }
+        ];
+        
         function preloadAssets() {
             const allImages = [ASSETS.MOGG, ASSETS.CACTUS, ASSETS.BONUS, ASSETS.SUPER_MASK, ...SHOP_ITEMS.map(i => i.img)];
             allImages.forEach(src => {
@@ -680,23 +692,7 @@
             document.getElementById("loading-screen").style.display = "flex";
             if (currentRoomPasscode) checkRoomStatus(); 
         }
-const ACHIEVEMENTS = [
-    { 
-        id: "first_blood", 
-        name: "First Blood", 
-        desc: "Land your very first hit!", 
-        reward: 50, 
-        icon: "🩸" 
-    },
-    { 
-        id: "oops", 
-        name: "Butterfingers", 
-        desc: "Miss 5 times in a single game.", 
-        reward: 10, 
-        icon: "🙈" 
-    }
-    // You can add more achievements here later!
-];
+
         
         function openRooms() {
             document.getElementById("loading-screen").style.display = "none";
@@ -1378,4 +1374,5 @@ const ACHIEVEMENTS = [
 </body>
 
 </html>
+
 
